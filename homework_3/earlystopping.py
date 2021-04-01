@@ -69,9 +69,10 @@ class early_stopping:
             self._min = loss
             self.save_model(loss, model)
         elif loss >= self._current:
+            gen_loss = self.generalized_loss(loss, self._min)
             if self._wordy:
-                self._messenger('early_stopping class message: bad step - ')
-            if self.generalized_loss(loss, self._min) > self._tolerance:
+                self._messenger('early_stopping class message: bad step - generalized loss {:.3f}'.format(gen_loss))
+            if gen_loss > self._tolerance:
                 self.early_stop = True
 
     def save_model(self, loss, model):
