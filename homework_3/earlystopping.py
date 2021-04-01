@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-class early_stopping:
+class EarlyStopping:
     """
     Early stopping procedure
     """
@@ -18,8 +18,6 @@ class early_stopping:
                     function used to print class messages
         _tolerance: Number
                     maximum allowed change in generalized loss 
-        _current:   Number
-                    variable for saving current values of the loss function
         _min:   Number
                 variable for saving the best loss computed up to current epoch
         _generalized_loss:  Number
@@ -40,8 +38,7 @@ class early_stopping:
         self._wordy = wordy
         self._path = saving_path
         self._messenger = messenger
-        self._tolerance = threshold
-        self._current = None
+        self._tolerance = tolerance
         self._min = np.Inf
         self._generalized_loss = 0
         self.early_stop = False
@@ -52,23 +49,16 @@ class early_stopping:
         ----------
         loss:   Number
                 computed loss function at current epoch
-        model:  class[torch.nn.Module]
+        model:  Class[torch.nn.Module]
                 model used for learning
         """
 
-        # initialize current loss to the passed computed loss
-        # and save minimum found (trivial in this case)
-        if self._current is None:
-            self._current = loss
-            self._min = loss
-            self.save_model(loss, model)
-        elif loss < self._current:
-            self._current = loss
+        if loss < self._min:
             if self._wordy:
                 self._messenger('early_stopping class message: good step - generalized loss {:.3f}'.format(self.generalized_loss(loss, self._min)))
             self._min = loss
             self.save_model(loss, model)
-        elif loss >= self._current:
+        elif loss >= self._min:
             gen_loss = self.generalized_loss(loss, self._min)
             if self._wordy:
                 self._messenger('early_stopping class message: bad step - generalized loss {:.3f}'.format(gen_loss))
@@ -83,7 +73,7 @@ class early_stopping:
         ----------
         loss:   Number
                 computed loss function at current epoch
-        model:  class[torch.nn.Module]
+        model:  Class[torch.nn.Module]
                 model used for learning
         """
 
