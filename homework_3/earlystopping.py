@@ -22,6 +22,8 @@ class EarlyStopping:
                 variable for saving the best loss computed up to current epoch
         _generalized_loss:  Number
                             variable for saving the change in loss function from previous to current step
+        steps: Number
+                number of epochs completed before early stopping
         early_stop: bool
                     boolean set to `True` if threshold is reached, `False` otherwise
 
@@ -41,6 +43,7 @@ class EarlyStopping:
         self._tolerance = tolerance
         self._min = np.Inf
         self._generalized_loss = 0
+        self.steps = 0
         self.early_stop = False
 
     def __call__(self, loss, model):
@@ -52,6 +55,8 @@ class EarlyStopping:
         model:  Class[torch.nn.Module]
                 model used for learning
         """
+
+        self.steps += 1
 
         if loss < self._min:
             if self._wordy:
@@ -91,5 +96,3 @@ class EarlyStopping:
                 minimum loss function computed up to current epoch
         """
         return loss/Min-1
-
-
